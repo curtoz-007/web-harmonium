@@ -419,7 +419,7 @@
       touch-action:none;
     }
 
-    /* White keys */
+    /* White  keys */
     .mob-wk{
       flex:1;
       background:linear-gradient(180deg,#f4ede1 0%,#efe8d5 14%,#e9e1c6 52%,#ddd5b6 80%,#cec2a0 100%);
