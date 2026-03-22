@@ -16,7 +16,7 @@
        ORIGINAL JS — ZERO CHANGES
   ═══════════════════════════════════════════ -->
   <script>
-    var sampleURL = 'harmonium-trad-orig.wav';
+    var sampleURL = 'harmonium-kannan-orig.wav';
     var debug = false;
     var AudioContext = AudioContext || webkitAudioContext, context = null;
     var audioBuffer = null, gainNode = null, reverbNode = null, useReverb = false;
@@ -288,13 +288,13 @@
       color:var(--gold-light);
       background:rgba(200,150,60,.12);
     }
-    /* Currently lit (key held) — bright */
+    /* Currently lit — instant-on, CSS transition fades it back out */
     .note-token.lit{
-      background:rgba(200,150,60,.32);
-      border-color:var(--gold);
+      background:rgba(200,150,60,.38);
+      border-color:var(--gold-light);
       color:#fff8e8;
-      box-shadow:0 0 10px rgba(200,150,60,.35);
-      transform:translateY(-1px);
+      box-shadow:0 0 12px rgba(200,150,60,.5);
+      transform:translateY(-2px);
     }
     /* Already played — dimmed */
     .note-token.played{
@@ -478,7 +478,7 @@
 
 <!-- Navbar -->
 <nav class="navbar">
-  <div class="brand"><div class="brand-pip"></div>Web Harmonium By XENTO</div>
+  <div class="brand"><div class="brand-pip"></div>Web Harmonium</div>
   <div class="nav-controls">
     <div class="nav-group">
       <label>Vol</label>
@@ -498,7 +498,7 @@
   <!-- Load screen -->
   <div id="loadScreen">
     <div class="load-title">Web Harmonium</div>
-    <div class="load-sub">Traditional reed organ · play with keyboard or MIDI</div>
+    <div class="load-sub">Indian reed organ · play with keyboard or MIDI</div>
     <button class="load-btn" onclick="document.getElementById('loadScreen').style.display='none'; load();">Load Module</button>
   </div>
 
@@ -743,9 +743,9 @@ function restoreSession(){
 ═══════════════════════════════════════════════════ */
 var helperCollapsed=false;
 var helperCurrentSong='';
-var helperTokens=[];       // flat ordered list of playable token elements
-var helperCursorIndex=0;   // which token is "next"
-var heldKeys={};           // keys currently held down
+var helperTokens=[];     // flat list of playable token elements, in order
+var helperCursorIndex=0; // index of the NEXT token to play
+var heldKeys={};         // tracks which keys are currently held (prevents repeat)
 
 function toggleHelper(){
   helperCollapsed=!helperCollapsed;
@@ -753,111 +753,130 @@ function toggleHelper(){
   n.classList.toggle('collapsed',helperCollapsed);b.textContent=helperCollapsed?'Show':'Hide';
 }
 
-/* KEY CHARS that are valid harmonium notes */
-var KEY_SET=new Set(['s','a','`','1','q','2','w','e','4','r','5','t','y','7','u','8','i','9','o','p','-','[','=',']','\\\'',';']);
+/* Valid single-char note keys */
+var KEY_SET=new Set(['s','a','`','1','q','2','w','e','4','r','5','t','y','7','u','8','i','9','o','p','-','[','=',']','\\',';']);
 function isNoteChar(c){return KEY_SET.has(c.toLowerCase());}
 
-/* Decide if a token is an annotation (non-playable) */
+/* A token is an annotation if ANY of its characters is not a note key */
 function isAnnotation(tok){
-  if(/^\(.*\)$/.test(tok))return true;  // (2X)
+  if(/^\(.*\)$/.test(tok))return true;
   for(var i=0;i<tok.length;i++){if(!isNoteChar(tok[i]))return true;}
   return false;
 }
 
-/* Build the helper display from a notes string */
+/* Build the note display. Each playable token gets stored in helperTokens[]. */
 function renderNotesInHelper(notesText){
   var container=document.getElementById('helperNotes');
-  helperTokens=[];helperCursorIndex=0;
-  if(!notesText){container.innerHTML='<div style="color:var(--muted);font-size:.8rem;font-style:italic;">No notes yet.</div>';return;}
-  var lines=notesText.split('\n');
+  helperTokens=[];
+  if(!notesText){
+    container.innerHTML='<div style="color:var(--muted);font-size:.8rem;font-style:italic;">No notes yet.</div>';
+    return;
+  }
   var frag=document.createElement('div');frag.className='helper-lines';
-  var globalIdx=0;
-  lines.forEach(function(line){
+  notesText.split('\n').forEach(function(line){
     if(!line.trim()){var sp=document.createElement('div');sp.style.height='8px';frag.appendChild(sp);return;}
     var row=document.createElement('div');row.className='helper-line';
     line.trim().split(/\s+/).forEach(function(tok){
       if(!tok)return;
+      var anno=isAnnotation(tok);
       var span=document.createElement('span');
-      span.className='note-token'+(isAnnotation(tok)?' annotation':'');
+      span.className='note-token'+(anno?' annotation':'');
       span.textContent=tok;
-      span.dataset.token=tok;
-      if(!isAnnotation(tok)){
-        span.dataset.idx=globalIdx;
-        helperTokens.push(span);
-        globalIdx++;
-      }
+      span.dataset.token=tok.toLowerCase(); // store lowercase for comparison
+      if(!anno)helperTokens.push(span);
       row.appendChild(span);
     });
     frag.appendChild(row);
   });
   container.innerHTML='';container.appendChild(frag);
+  // clamp cursor in case song changed
+  helperCursorIndex=Math.min(helperCursorIndex,Math.max(0,helperTokens.length-1));
   renderHelperState();
 }
 
-/* Apply played/next/default classes to all tokens */
+/* Repaint all token states without touching heldKeys */
 function renderHelperState(){
   helperTokens.forEach(function(tok,i){
     tok.classList.remove('played','next','lit');
-    if(i<helperCursorIndex)tok.classList.add('played');
-    else if(i===helperCursorIndex)tok.classList.add('next');
+    if(i<helperCursorIndex)       tok.classList.add('played');
+    else if(i===helperCursorIndex) tok.classList.add('next');
   });
-  // scroll cursor token into view
-  if(helperTokens[helperCursorIndex]){
-    helperTokens[helperCursorIndex].scrollIntoView({block:'nearest',inline:'nearest',behavior:'smooth'});
-  }
+  var cur=helperTokens[helperCursorIndex];
+  if(cur)cur.scrollIntoView({block:'nearest',inline:'nearest',behavior:'smooth'});
 }
 
 function resetHelperPos(){
-  helperCursorIndex=0;
-  heldKeys={};
-  renderHelperState();
-  saveSession();
+  helperCursorIndex=0;heldKeys={};renderHelperState();saveSession();
 }
 
-/* Called when a key goes down */
+/*
+  HOW THE SEQUENTIAL TRACKER WORKS
+  ─────────────────────────────────
+  Each playable token is a string of note chars, e.g. "e", "45", "E45".
+  We advance the cursor INSTANTLY when the key pressed matches
+  the FIRST character of the current token (case-insensitive).
+
+  For multi-char tokens like "E45":
+    • The token's chars represent notes played close together / simultaneously.
+    • We treat ANY of the token's chars as a valid trigger for that token.
+    • The moment ANY char in the token is pressed, that token lights up
+      and the cursor advances immediately — no delay.
+
+  This makes the tracker feel instant and keeps up with fast playing.
+  The .lit class flashes via CSS transition (no JS timeout blocking next press).
+*/
 function onNoteKeyDown(key){
-  if(heldKeys[key])return; // already counted
+  // Prevent repeat events (key held)
+  if(heldKeys[key])return;
   heldKeys[key]=true;
 
-  if(helperTokens.length===0)return;
+  if(!helperTokens.length)return;
   var cur=helperTokens[helperCursorIndex];
   if(!cur)return;
 
-  var tok=cur.dataset.token||'';
+  var keyLow=key.toLowerCase();
+  var tokLow=cur.dataset.token||'';
 
-  /* Check if the key matches the NEXT token.
-     Token can be multi-char like "E45" → needs all chars pressed.
-     Strategy: we match the token character-by-character in sequence.
-     When the full token is satisfied, advance cursor. */
+  // Does this key appear anywhere in the current token?
+  if(tokLow.indexOf(keyLow)===-1)return;
 
-  // Normalise: treat uppercase and lowercase as same
-  var keyLower=key.toLowerCase();
+  // ── MATCH: advance immediately ──
+  // 1. Mark current as lit (CSS handles the flash; no setTimeout)
+  cur.classList.remove('next');
+  cur.classList.add('lit');
 
-  // For a multi-char token like "E45", we check if this key is the
-  // NEXT unmatched char in the token (case-insensitive for letters).
-  if(!cur._matchPos)cur._matchPos=0;
-
-  var tokenLower=tok.toLowerCase();
-  if(tokenLower[cur._matchPos]===keyLower){
-    cur._matchPos++;
-    // Fully matched?
-    if(cur._matchPos>=tok.length){
-      cur.classList.remove('next');
-      cur.classList.add('lit');
-      cur._matchPos=0;
-      // Advance after a brief flash
-      setTimeout(function(){
-        if(cur)cur.classList.remove('lit');
-        // Skip annotations
-        helperCursorIndex++;
-        while(helperCursorIndex<helperTokens.length&&helperTokens[helperCursorIndex]&&helperTokens[helperCursorIndex].classList.contains('annotation')){
-          helperCursorIndex++;
-        }
-        renderHelperState();
-        saveSession();
-      },180);
-    }
+  // 2. Move cursor forward right now
+  helperCursorIndex++;
+  // Skip any annotation spans (shouldn't be in helperTokens, but safety)
+  while(helperCursorIndex<helperTokens.length && helperTokens[helperCursorIndex] && helperTokens[helperCursorIndex].classList.contains('annotation')){
+    helperCursorIndex++;
   }
+
+  // 3. Apply new state to everything EXCEPT the just-lit token
+  //    (we leave it as 'lit' so the user sees it briefly)
+  helperTokens.forEach(function(tok,i){
+    if(tok===cur)return; // keep lit
+    tok.classList.remove('played','next','lit');
+    if(i<helperCursorIndex)       tok.classList.add('played');
+    else if(i===helperCursorIndex) tok.classList.add('next');
+  });
+
+  // 4. Scroll next token into view
+  var next=helperTokens[helperCursorIndex];
+  if(next)next.scrollIntoView({block:'nearest',inline:'nearest',behavior:'smooth'});
+
+  // 5. Remove .lit from the matched token after CSS transition finishes
+  //    We use requestAnimationFrame so it doesn't block this keydown at all
+  requestAnimationFrame(function(){
+    requestAnimationFrame(function(){
+      if(cur)cur.classList.remove('lit');
+      if(cur&&cur.classList.contains('played'));// already marked above
+      // ensure played is set after lit removed
+      if(helperTokens.indexOf(cur)<helperCursorIndex)cur.classList.add('played');
+    });
+  });
+
+  saveSession();
 }
 
 function onNoteKeyUp(key){
