@@ -390,6 +390,6 @@ var keyboardMap = {
 
 ## 🙏 Attribution
 
-Inspired by traditional harmonium instruments of North India. Built with modern web audio technologies.
+Inspired by traditional harmonium instruments of North East Asia. Built with modern web audio technologies.
 
 **Enjoy your playing! 🎶**
