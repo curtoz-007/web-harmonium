@@ -79,7 +79,7 @@ function getKeyEl(k){
 })();
 
 /* ═══════════════════════════════════════════════════
-   MOBILE ON-SCREEN KEYBOARD — real piano layout
+   MOBILE ON-SCREEN KEYBOARD 
    White keys: ` q w e r t y u i o p [ ] \
    Black keys: 1 2 | 4 5 | 7 8 9 | - =
 ═══════════════════════════════════════════════════ */
