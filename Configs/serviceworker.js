@@ -1,8 +1,8 @@
 const staticDevCoffee = "web-harmonium";
 const assets = [
   "/",
-  "/webharmonium.html",
-  "/harmonium-kannan-orig.wav"
+  "/index.html",
+  "/harmonium-trad-orig.wav"
 ];
 
 self.addEventListener("install", installEvent => {
