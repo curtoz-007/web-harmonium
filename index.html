@@ -526,7 +526,7 @@
     <div class="cabinet">
       <div class="nameplate">
         <h1>HARMONIUM</h1>
-        <div class="nameplate-rule"><hr><span>Indian Reed Organ</span><hr></div>
+        <div class="nameplate-rule"><hr><span>Traditional Reed Organ</span><hr></div>
       </div>
       <div class="stage">
         <div class="keys-row" id="keysRow">
@@ -826,7 +826,6 @@ function resetHelperPos(){
   The .lit class flashes via CSS transition (no JS timeout blocking next press).
 */
 function onNoteKeyDown(key){
-  // Prevent repeat events (key held)
   if(heldKeys[key])return;
   heldKeys[key]=true;
 
@@ -837,42 +836,43 @@ function onNoteKeyDown(key){
   var keyLow=key.toLowerCase();
   var tokLow=cur.dataset.token||'';
 
-  // Does this key appear anywhere in the current token?
-  if(tokLow.indexOf(keyLow)===-1)return;
+  // _matchPos tracks how many chars of this token have been pressed so far
+  if(cur._matchPos===undefined)cur._matchPos=0;
 
-  // ── MATCH: advance immediately ──
-  // 1. Mark current as lit (CSS handles the flash; no setTimeout)
+  // Only match the NEXT character in sequence, not any char in the token
+  if(tokLow[cur._matchPos]!==keyLow)return;
+
+  cur._matchPos++;
+
+  // Not fully matched yet — just highlight partially, don't advance
+  if(cur._matchPos<tokLow.length){
+    cur.classList.add('lit'); // partial progress visual
+    return;
+  }
+
+  // Fully matched — advance cursor
+  cur._matchPos=0;
   cur.classList.remove('next');
   cur.classList.add('lit');
 
-  // 2. Move cursor forward right now
   helperCursorIndex++;
-  // Skip any annotation spans (shouldn't be in helperTokens, but safety)
-  while(helperCursorIndex<helperTokens.length && helperTokens[helperCursorIndex] && helperTokens[helperCursorIndex].classList.contains('annotation')){
+  while(helperCursorIndex<helperTokens.length&&helperTokens[helperCursorIndex]&&helperTokens[helperCursorIndex].classList.contains('annotation')){
     helperCursorIndex++;
   }
 
-  // 3. Apply new state to everything EXCEPT the just-lit token
-  //    (we leave it as 'lit' so the user sees it briefly)
   helperTokens.forEach(function(tok,i){
-    if(tok===cur)return; // keep lit
+    if(tok===cur)return;
     tok.classList.remove('played','next','lit');
     if(i<helperCursorIndex)       tok.classList.add('played');
     else if(i===helperCursorIndex) tok.classList.add('next');
   });
 
-  // 4. Scroll next token into view
   var next=helperTokens[helperCursorIndex];
   if(next)next.scrollIntoView({block:'nearest',inline:'nearest',behavior:'smooth'});
 
-  // 5. Remove .lit from the matched token after CSS transition finishes
-  //    We use requestAnimationFrame so it doesn't block this keydown at all
   requestAnimationFrame(function(){
     requestAnimationFrame(function(){
-      if(cur)cur.classList.remove('lit');
-      if(cur&&cur.classList.contains('played'));// already marked above
-      // ensure played is set after lit removed
-      if(helperTokens.indexOf(cur)<helperCursorIndex)cur.classList.add('played');
+      if(cur){cur.classList.remove('lit');if(helperTokens.indexOf(cur)<helperCursorIndex)cur.classList.add('played');}
     });
   });
 
