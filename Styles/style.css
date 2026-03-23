@@ -498,3 +498,30 @@
       user-select:none;
       touch-action:none;
     }
+
+    /* ══════════════════════════════════════════════
+       PORTRAIT LOCK OVERLAY
+    ══════════════════════════════════════════════ */
+    #portraitOverlay{
+      display:none;
+      position:fixed;inset:0;z-index:9999;
+      background:var(--bg);
+      flex-direction:column;align-items:center;justify-content:center;
+      gap:20px;text-align:center;padding:32px;
+    }
+    #portraitOverlay.show{ display:flex; }
+    .portrait-icon{
+      font-size:3.5rem;
+      animation:rotateHint 2s ease-in-out infinite;
+    }
+    @keyframes rotateHint{
+      0%,100%{ transform:rotate(0deg); }
+      50%{ transform:rotate(90deg); }
+    }
+    .portrait-title{
+      font-family:'Cinzel',serif;font-size:1.1rem;font-weight:700;
+      color:var(--gold-light);letter-spacing:.15em;
+    }
+    .portrait-sub{
+      font-size:.82rem;color:var(--muted);line-height:1.7;max-width:260px;
+    }
