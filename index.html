@@ -18,6 +18,13 @@
 </head>
 <body>
 
+<!-- Portrait lock overlay -->
+<div id="portraitOverlay">
+  <div class="portrait-icon">📱</div>
+  <div class="portrait-title">Rotate Your Device</div>
+  <div class="portrait-sub">Web Harmonium works best in landscape mode.<br>Please rotate your phone sideways.</div>
+</div>
+
 <!--  Navbar -->
 <nav class="navbar">
   <div class="brand"><div class="brand-pip"></div>Web Harmonium</div>
@@ -145,6 +152,10 @@
       <div class="modal-toggle-row">
         <span class="mctrl-label">Reverb</span>
         <label class="sw"><input id="useReverbModal" type="checkbox" onclick="syncReverb(this.checked)"><span class="sw-track"></span></label>
+      </div>
+      <div class="modal-toggle-row">
+        <span class="mctrl-label">Note Helper</span>
+        <label class="sw"><input id="noteHelperToggle" type="checkbox" onclick="setNoteHelperEnabled(this.checked)"><span class="sw-track"></span></label>
       </div>
     </div>
 
