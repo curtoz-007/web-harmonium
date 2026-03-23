@@ -2,6 +2,22 @@
 /* ═══════════════════════════════════════════════════
    MOBILE DETECTION
 ═══════════════════════════════════════════════════ */
+
+/* ═══════════════════════════════════════════════════
+   PORTRAIT LOCK
+═══════════════════════════════════════════════════ */
+function checkOrientation(){
+  var overlay = document.getElementById('portraitOverlay');
+  if(!overlay) return;
+  var isTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+  if(!isTouch){ overlay.classList.remove('show'); return; }
+  var portrait = window.innerHeight > window.innerWidth;
+  overlay.classList.toggle('show', portrait);
+}
+window.addEventListener('resize', checkOrientation);
+window.addEventListener('orientationchange', function(){ setTimeout(checkOrientation, 150); });
+window.addEventListener('load', checkOrientation);
+
 function isMobile(){return window.innerWidth<=600;}
 
 /* ═══════════════════════════════════════════════════
@@ -89,7 +105,8 @@ var _origInit=init;
 init=function(){
   _origInit();
   requestAnimationFrame(layoutKeys);
-  document.getElementById('noteHelper').style.display='block';
+  var _nhEnabled = localStorage.getItem('webharmonium.noteHelper') === 'true';
+  applyNoteHelperState(_nhEnabled);
   rebuildHelperDropdown();
   restoreSession();
   buildOskKeyboard();
@@ -512,3 +529,15 @@ function exportConfigJSON(){downloadFile('harmonium-songs.json',JSON.stringify(c
 function downloadFile(name,content,mime){
   var a=document.createElement('a');a.href=URL.createObjectURL(new Blob([content],{type:mime}));a.download=name;document.body.appendChild(a);a.click();document.body.removeChild(a);
 }
+
+/* ═══════════════════════════════════════════════════
+   NOTE HELPER TOGGLE
+═══════════════════════════════════════════════════ */
+function applyNoteHelperState(enabled){
+  localStorage.setItem('webharmonium.noteHelper', enabled ? 'true' : 'false');
+  var panel = document.getElementById('noteHelper');
+  if(panel) panel.style.display = enabled ? 'block' : 'none';
+  var tog = document.getElementById('noteHelperToggle');
+  if(tog) tog.checked = enabled;
+}
+function setNoteHelperEnabled(enabled){ applyNoteHelperState(enabled); }
