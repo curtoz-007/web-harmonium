@@ -5,41 +5,41 @@
 function isMobile(){return window.innerWidth<=600;}
 
 /* ═══════════════════════════════════════════════════
-   PORTRAIT LOCK
-   On touch devices in portrait: show overlay, block use
+   GLOBAL TOUCH SAFETY — resume context on first touch
+   and block contextmenu (prevents vibration on long-press)
 ═══════════════════════════════════════════════════ */
-function checkOrientation(){
-  var overlay = document.getElementById('portraitOverlay');
-  if(!overlay) return;
-  var isTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
-  if(!isTouch){ overlay.classList.remove('show'); return; }
-  var portrait = window.innerHeight > window.innerWidth;
-  if(portrait){
-    overlay.classList.add('show');
-  } else {
-    overlay.classList.remove('show');
+document.addEventListener('touchstart', function(){
+  if(typeof context !== 'undefined' && context && context.state === 'suspended'){
+    context.resume();
   }
-}
-window.addEventListener('resize', checkOrientation);
-window.addEventListener('orientationchange', function(){ setTimeout(checkOrientation, 150); });
-window.addEventListener('load', checkOrientation);
+}, {passive:true, once:false});
 
-/* ═══════════════════════════════════════════════════
-   NOTE HELPER TOGGLE
-═══════════════════════════════════════════════════ */
-function applyNoteHelperState(enabled){
-  localStorage.setItem('webharmonium.noteHelper', enabled ? 'true' : 'false');
-  var panel = document.getElementById('noteHelper');
-  if(!panel) return;
-  panel.style.display = enabled ? 'block' : 'none';
-  // Also sync the checkbox if settings is open
-  var tog = document.getElementById('noteHelperToggle');
-  if(tog) tog.checked = enabled;
-}
+// Block contextmenu on the whole page (long-press vibration source on Android)
+document.addEventListener('contextmenu', function(e){
+  e.preventDefault();
+  return false;
+});
 
-function setNoteHelperEnabled(enabled){
-  applyNoteHelperState(enabled);
-}
+// Safety net: if a touchend fires outside a key element (finger slides off),
+// stop ALL currently playing OSK notes to prevent stuck sound loops
+document.addEventListener('touchend', function(e){
+  // Only run if there are active OSK keys
+  var anyActive = Object.keys(oskActiveKeys).some(function(k){ return oskActiveKeys[k]; });
+  if(!anyActive) return;
+  // For each touch that ended, check if it landed on a key element
+  // If not, release all stuck notes
+  var touchedEl = e.target;
+  var onKey = touchedEl && (
+    touchedEl.classList.contains('mob-wk') ||
+    touchedEl.classList.contains('mob-bk') ||
+    touchedEl.closest && (touchedEl.closest('.mob-wk') || touchedEl.closest('.mob-bk'))
+  );
+  if(!onKey){
+    Object.keys(oskActiveKeys).forEach(function(k){
+      if(oskActiveKeys[k]) oskKeyUp(k, document.querySelector('[data-key="'+k+'"]'));
+    });
+  }
+}, {passive:true});
 
 /* ═══════════════════════════════════════════════════
    BLACK KEY LAYOUT
@@ -89,9 +89,7 @@ var _origInit=init;
 init=function(){
   _origInit();
   requestAnimationFrame(layoutKeys);
-  // Note helper: off by default unless user enabled it
-  var enabled = localStorage.getItem('webharmonium.noteHelper') === 'true';
-  applyNoteHelperState(enabled);
+  document.getElementById('noteHelper').style.display='block';
   rebuildHelperDropdown();
   restoreSession();
   buildOskKeyboard();
@@ -195,19 +193,25 @@ function buildOskKeyboard(){
 }
 
 function attachOskTouch(el, keyChar){
+  // contextmenu fires on long-press (causes vibration) — block it
+  el.addEventListener('contextmenu', function(e){ e.preventDefault(); e.stopPropagation(); return false; });
+
   el.addEventListener('touchstart', function(e){
     e.preventDefault();
+    e.stopPropagation();
     oskKeyDown(keyChar, el);
   },{passive:false});
   el.addEventListener('touchend', function(e){
     e.preventDefault();
+    e.stopPropagation();
     oskKeyUp(keyChar, el);
   },{passive:false});
   el.addEventListener('touchcancel', function(e){
     e.preventDefault();
+    e.stopPropagation();
     oskKeyUp(keyChar, el);
   },{passive:false});
-  el.addEventListener('mousedown',  function(e){ oskKeyDown(keyChar, el); });
+  el.addEventListener('mousedown',  function(e){ e.preventDefault(); oskKeyDown(keyChar, el); });
   el.addEventListener('mouseup',    function(e){ oskKeyUp(keyChar, el); });
   el.addEventListener('mouseleave', function(e){ if(oskActiveKeys[keyChar]) oskKeyUp(keyChar, el); });
 }
@@ -283,10 +287,6 @@ function openSettings(){
   document.getElementById('myRangeModal').value=document.getElementById('myRange').value;
   document.getElementById('volumeLevelModal').innerText=document.getElementById('myRange').value+'%';
   document.getElementById('useReverbModal').checked=document.getElementById('useReverb').checked;
-  // Sync note helper toggle
-  var enabled = localStorage.getItem('webharmonium.noteHelper') === 'true';
-  var tog = document.getElementById('noteHelperToggle');
-  if(tog) tog.checked = enabled;
   renderSongList();
   document.getElementById('settingsOverlay').classList.add('open');
 }
