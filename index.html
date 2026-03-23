@@ -9,19 +9,14 @@
   <link rel="manifest" href="Configs/manifest.json">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Lato:ital,wght@0,300;0,400;0,700;1,400&display=swap" rel="stylesheet">
+  <link rel="icon" type="image/png" href="icons/favicon.png">
+  <link rel="apple-touch-icon" href="icons/favicon.png">
   <script src="Notes/Keynotes.js"></script>
   <script src="Scripts/sound_sys.js"></script>
   <title>Web Harmonium</title>
 <link rel="stylesheet" href="Styles/style.css">
 </head>
 <body>
-
-<!-- Portrait lock overlay — hidden on landscape, shown on portrait mobile -->
-<div id="portraitOverlay">
-  <div class="portrait-icon">📱</div>
-  <div class="portrait-title">Rotate Your Device</div>
-  <div class="portrait-sub">Web Harmonium works best in landscape mode. Please rotate your phone sideways.</div>
-</div>
 
 <!--  Navbar -->
 <nav class="navbar">
@@ -79,29 +74,29 @@
         <!-- keys-outer wraps keys-row for horizontal scroll on mobile -->
         <div class="keys-outer">
           <div class="keys-row" id="keysRow">
-            <div class="wk" key="`"  onmousedown="play(this)" onmouseup="stop(this)" onmouseleave="stop(this)" ontouchstart="play(this)" ontouchend="stop(this)" ontouchcancel="stop(this)"><span class="kb">`</span></div>
-            <div class="wk" key="q"  onmousedown="play(this)" onmouseup="stop(this)" onmouseleave="stop(this)" ontouchstart="play(this)" ontouchend="stop(this)" ontouchcancel="stop(this)"><span class="kb">q</span></div>
-            <div class="wk" key="w"  onmousedown="play(this)" onmouseup="stop(this)" onmouseleave="stop(this)" ontouchstart="play(this)" ontouchend="stop(this)" ontouchcancel="stop(this)"><span class="kb">w</span></div>
-            <div class="wk" key="e"  onmousedown="play(this)" onmouseup="stop(this)" onmouseleave="stop(this)" ontouchstart="play(this)" ontouchend="stop(this)" ontouchcancel="stop(this)"><span class="kb">e</span><span class="nt">C</span></div>
-            <div class="wk" key="r"  onmousedown="play(this)" onmouseup="stop(this)" onmouseleave="stop(this)" ontouchstart="play(this)" ontouchend="stop(this)" ontouchcancel="stop(this)"><span class="kb">r</span><span class="nt">D</span></div>
-            <div class="wk" key="t"  onmousedown="play(this)" onmouseup="stop(this)" onmouseleave="stop(this)" ontouchstart="play(this)" ontouchend="stop(this)" ontouchcancel="stop(this)"><span class="kb">t</span><span class="nt">E</span></div>
-            <div class="wk" key="y"  onmousedown="play(this)" onmouseup="stop(this)" onmouseleave="stop(this)" ontouchstart="play(this)" ontouchend="stop(this)" ontouchcancel="stop(this)"><span class="kb">y</span><span class="nt">F</span></div>
-            <div class="wk" key="u"  onmousedown="play(this)" onmouseup="stop(this)" onmouseleave="stop(this)" ontouchstart="play(this)" ontouchend="stop(this)" ontouchcancel="stop(this)"><span class="kb">u</span><span class="nt">G</span></div>
-            <div class="wk" key="i"  onmousedown="play(this)" onmouseup="stop(this)" onmouseleave="stop(this)" ontouchstart="play(this)" ontouchend="stop(this)" ontouchcancel="stop(this)"><span class="kb">i</span><span class="nt">A</span></div>
-            <div class="wk" key="o"  onmousedown="play(this)" onmouseup="stop(this)" onmouseleave="stop(this)" ontouchstart="play(this)" ontouchend="stop(this)" ontouchcancel="stop(this)"><span class="kb">o</span><span class="nt">B</span></div>
-            <div class="wk" key="p"  onmousedown="play(this)" onmouseup="stop(this)" onmouseleave="stop(this)" ontouchstart="play(this)" ontouchend="stop(this)" ontouchcancel="stop(this)"><span class="kb">p</span></div>
-            <div class="wk" key="["  onmousedown="play(this)" onmouseup="stop(this)" onmouseleave="stop(this)" ontouchstart="play(this)" ontouchend="stop(this)" ontouchcancel="stop(this)"><span class="kb">[</span></div>
-            <div class="wk" key="]"  onmousedown="play(this)" onmouseup="stop(this)" onmouseleave="stop(this)" ontouchstart="play(this)" ontouchend="stop(this)" ontouchcancel="stop(this)"><span class="kb">]</span></div>
-            <div class="wk" key="\"  onmousedown="play(this)" onmouseup="stop(this)" onmouseleave="stop(this)" ontouchstart="play(this)" ontouchend="stop(this)" ontouchcancel="stop(this)"><span class="kb">\</span></div>
-            <div class="bk" id="bk1"    key="1" onmousedown="play(this)" onmouseup="stop(this)" onmouseleave="stop(this)" ontouchstart="play(this)" ontouchend="stop(this)" ontouchcancel="stop(this)"><span class="kb">1</span></div>
-            <div class="bk" id="bk2"    key="2" onmousedown="play(this)" onmouseup="stop(this)" onmouseleave="stop(this)" ontouchstart="play(this)" ontouchend="stop(this)" ontouchcancel="stop(this)"><span class="kb">2</span></div>
-            <div class="bk" id="bk4"    key="4" onmousedown="play(this)" onmouseup="stop(this)" onmouseleave="stop(this)" ontouchstart="play(this)" ontouchend="stop(this)" ontouchcancel="stop(this)"><span class="kb">4</span></div>
-            <div class="bk" id="bk5"    key="5" onmousedown="play(this)" onmouseup="stop(this)" onmouseleave="stop(this)" ontouchstart="play(this)" ontouchend="stop(this)" ontouchcancel="stop(this)"><span class="kb">5</span></div>
-            <div class="bk" id="bk7"    key="7" onmousedown="play(this)" onmouseup="stop(this)" onmouseleave="stop(this)" ontouchstart="play(this)" ontouchend="stop(this)" ontouchcancel="stop(this)"><span class="kb">7</span></div>
-            <div class="bk" id="bk8"    key="8" onmousedown="play(this)" onmouseup="stop(this)" onmouseleave="stop(this)" ontouchstart="play(this)" ontouchend="stop(this)" ontouchcancel="stop(this)"><span class="kb">8</span></div>
-            <div class="bk" id="bk9"    key="9" onmousedown="play(this)" onmouseup="stop(this)" onmouseleave="stop(this)" ontouchstart="play(this)" ontouchend="stop(this)" ontouchcancel="stop(this)"><span class="kb">9</span></div>
-            <div class="bk" id="bkDash" key="-" onmousedown="play(this)" onmouseup="stop(this)" onmouseleave="stop(this)" ontouchstart="play(this)" ontouchend="stop(this)" ontouchcancel="stop(this)"><span class="kb">-</span></div>
-            <div class="bk" id="bkEq"   key="=" onmousedown="play(this)" onmouseup="stop(this)" onmouseleave="stop(this)" ontouchstart="play(this)" ontouchend="stop(this)" ontouchcancel="stop(this)"><span class="kb">=</span></div>
+            <div class="wk" key="`"  onmousedown="play(this)" onmouseup="stop(this)" onmouseleave="stop(this)" ontouchstart="play(this)" ontouchend="stop(this)" ontouchcancel="stop(this)" oncontextmenu="return false"><span class="kb">`</span></div>
+            <div class="wk" key="q"  onmousedown="play(this)" onmouseup="stop(this)" onmouseleave="stop(this)" ontouchstart="play(this)" ontouchend="stop(this)" ontouchcancel="stop(this)" oncontextmenu="return false"><span class="kb">q</span></div>
+            <div class="wk" key="w"  onmousedown="play(this)" onmouseup="stop(this)" onmouseleave="stop(this)" ontouchstart="play(this)" ontouchend="stop(this)" ontouchcancel="stop(this)" oncontextmenu="return false"><span class="kb">w</span></div>
+            <div class="wk" key="e"  onmousedown="play(this)" onmouseup="stop(this)" onmouseleave="stop(this)" ontouchstart="play(this)" ontouchend="stop(this)" ontouchcancel="stop(this)" oncontextmenu="return false"><span class="kb">e</span><span class="nt">C</span></div>
+            <div class="wk" key="r"  onmousedown="play(this)" onmouseup="stop(this)" onmouseleave="stop(this)" ontouchstart="play(this)" ontouchend="stop(this)" ontouchcancel="stop(this)" oncontextmenu="return false"><span class="kb">r</span><span class="nt">D</span></div>
+            <div class="wk" key="t"  onmousedown="play(this)" onmouseup="stop(this)" onmouseleave="stop(this)" ontouchstart="play(this)" ontouchend="stop(this)" ontouchcancel="stop(this)" oncontextmenu="return false"><span class="kb">t</span><span class="nt">E</span></div>
+            <div class="wk" key="y"  onmousedown="play(this)" onmouseup="stop(this)" onmouseleave="stop(this)" ontouchstart="play(this)" ontouchend="stop(this)" ontouchcancel="stop(this)" oncontextmenu="return false"><span class="kb">y</span><span class="nt">F</span></div>
+            <div class="wk" key="u"  onmousedown="play(this)" onmouseup="stop(this)" onmouseleave="stop(this)" ontouchstart="play(this)" ontouchend="stop(this)" ontouchcancel="stop(this)" oncontextmenu="return false"><span class="kb">u</span><span class="nt">G</span></div>
+            <div class="wk" key="i"  onmousedown="play(this)" onmouseup="stop(this)" onmouseleave="stop(this)" ontouchstart="play(this)" ontouchend="stop(this)" ontouchcancel="stop(this)" oncontextmenu="return false"><span class="kb">i</span><span class="nt">A</span></div>
+            <div class="wk" key="o"  onmousedown="play(this)" onmouseup="stop(this)" onmouseleave="stop(this)" ontouchstart="play(this)" ontouchend="stop(this)" ontouchcancel="stop(this)" oncontextmenu="return false"><span class="kb">o</span><span class="nt">B</span></div>
+            <div class="wk" key="p"  onmousedown="play(this)" onmouseup="stop(this)" onmouseleave="stop(this)" ontouchstart="play(this)" ontouchend="stop(this)" ontouchcancel="stop(this)" oncontextmenu="return false"><span class="kb">p</span></div>
+            <div class="wk" key="["  onmousedown="play(this)" onmouseup="stop(this)" onmouseleave="stop(this)" ontouchstart="play(this)" ontouchend="stop(this)" ontouchcancel="stop(this)" oncontextmenu="return false"><span class="kb">[</span></div>
+            <div class="wk" key="]"  onmousedown="play(this)" onmouseup="stop(this)" onmouseleave="stop(this)" ontouchstart="play(this)" ontouchend="stop(this)" ontouchcancel="stop(this)" oncontextmenu="return false"><span class="kb">]</span></div>
+            <div class="wk" key="\"  onmousedown="play(this)" onmouseup="stop(this)" onmouseleave="stop(this)" ontouchstart="play(this)" ontouchend="stop(this)" ontouchcancel="stop(this)" oncontextmenu="return false"><span class="kb">\</span></div>
+            <div class="bk" id="bk1"    key="1" onmousedown="play(this)" onmouseup="stop(this)" onmouseleave="stop(this)" ontouchstart="play(this)" ontouchend="stop(this)" ontouchcancel="stop(this)" oncontextmenu="return false"><span class="kb">1</span></div>
+            <div class="bk" id="bk2"    key="2" onmousedown="play(this)" onmouseup="stop(this)" onmouseleave="stop(this)" ontouchstart="play(this)" ontouchend="stop(this)" ontouchcancel="stop(this)" oncontextmenu="return false"><span class="kb">2</span></div>
+            <div class="bk" id="bk4"    key="4" onmousedown="play(this)" onmouseup="stop(this)" onmouseleave="stop(this)" ontouchstart="play(this)" ontouchend="stop(this)" ontouchcancel="stop(this)" oncontextmenu="return false"><span class="kb">4</span></div>
+            <div class="bk" id="bk5"    key="5" onmousedown="play(this)" onmouseup="stop(this)" onmouseleave="stop(this)" ontouchstart="play(this)" ontouchend="stop(this)" ontouchcancel="stop(this)" oncontextmenu="return false"><span class="kb">5</span></div>
+            <div class="bk" id="bk7"    key="7" onmousedown="play(this)" onmouseup="stop(this)" onmouseleave="stop(this)" ontouchstart="play(this)" ontouchend="stop(this)" ontouchcancel="stop(this)" oncontextmenu="return false"><span class="kb">7</span></div>
+            <div class="bk" id="bk8"    key="8" onmousedown="play(this)" onmouseup="stop(this)" onmouseleave="stop(this)" ontouchstart="play(this)" ontouchend="stop(this)" ontouchcancel="stop(this)" oncontextmenu="return false"><span class="kb">8</span></div>
+            <div class="bk" id="bk9"    key="9" onmousedown="play(this)" onmouseup="stop(this)" onmouseleave="stop(this)" ontouchstart="play(this)" ontouchend="stop(this)" ontouchcancel="stop(this)" oncontextmenu="return false"><span class="kb">9</span></div>
+            <div class="bk" id="bkDash" key="-" onmousedown="play(this)" onmouseup="stop(this)" onmouseleave="stop(this)" ontouchstart="play(this)" ontouchend="stop(this)" ontouchcancel="stop(this)" oncontextmenu="return false"><span class="kb">-</span></div>
+            <div class="bk" id="bkEq"   key="=" onmousedown="play(this)" onmouseup="stop(this)" onmouseleave="stop(this)" ontouchstart="play(this)" ontouchend="stop(this)" ontouchcancel="stop(this)" oncontextmenu="return false"><span class="kb">=</span></div>
           </div>
         </div>
       </div>
@@ -150,16 +145,6 @@
       <div class="modal-toggle-row">
         <span class="mctrl-label">Reverb</span>
         <label class="sw"><input id="useReverbModal" type="checkbox" onclick="syncReverb(this.checked)"><span class="sw-track"></span></label>
-      </div>
-    </div>
-
-    <hr class="modal-divider">
-
-    <div class="modal-section">
-      <div class="modal-section-title">Display</div>
-      <div class="modal-toggle-row">
-        <span class="mctrl-label">Note Helper</span>
-        <label class="sw"><input id="noteHelperToggle" type="checkbox" onclick="setNoteHelperEnabled(this.checked)"><span class="sw-track"></span></label>
       </div>
     </div>
 
