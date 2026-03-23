@@ -152,9 +152,22 @@ var sampleURL = 'Sounds/harmonium-trad-orig.wav';
       if(typeof(Storage)!=="undefined")localStorage.setItem("webharmonium.transpose",document.getElementById('transpose').innerText);
       init();
     }
-    var notePlaying=0;
-    function play(el){notePlaying=keyboardMap[el.getAttribute('key')];noteOn(notePlaying);}
-    function stop(el){noteOff(notePlaying);}
+    // Per-element note tracking — each key remembers its own note
+    // so multi-touch doesn't cause one key to stop another
+    var notePlaying=0; // kept for any external reference
+    function play(el){
+      var note=keyboardMap[el.getAttribute('key')];
+      if(note===undefined)return;
+      el._playingNote=note;
+      notePlaying=note;
+      noteOn(note);
+    }
+    function stop(el){
+      var note=el._playingNote;
+      if(note===undefined)return;
+      el._playingNote=undefined;
+      noteOff(note);
+    }
     function onGainChange(){
       if(typeof(Storage)!=="undefined")localStorage.setItem("webharmonium.volume",document.getElementById("myRange").value);
       document.getElementById('volumeLevel').innerText=document.getElementById("myRange").value+"%";
