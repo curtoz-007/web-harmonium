@@ -478,3 +478,46 @@
       padding:8px 14px;background:rgba(200,150,60,.05);
       border:1px solid rgba(200,150,60,.1);border-radius:8px;
     }
+
+    /* ══════════════════════════════════════════════
+       PORTRAIT LOCK — force landscape on mobile
+    ══════════════════════════════════════════════ */
+    #portraitOverlay{
+      display:none;
+      position:fixed;inset:0;z-index:9999;
+      background:var(--bg);
+      flex-direction:column;align-items:center;justify-content:center;
+      gap:20px;text-align:center;padding:32px;
+    }
+    #portraitOverlay.show{ display:flex; }
+    .portrait-icon{
+      font-size:3rem;
+      animation:rotateHint 2s ease-in-out infinite;
+    }
+    @keyframes rotateHint{
+      0%,100%{ transform:rotate(0deg); }
+      50%{ transform:rotate(90deg); }
+    }
+    .portrait-title{
+      font-family:'Cinzel',serif;font-size:1.1rem;font-weight:700;
+      color:var(--gold-light);letter-spacing:.15em;
+    }
+    .portrait-sub{
+      font-size:.82rem;color:var(--muted);line-height:1.6;max-width:260px;
+    }
+
+    /* ══════════════════════════════════════════════
+       REMOVE TOUCH SELECTION / HIGHLIGHT ON KEYS
+    ══════════════════════════════════════════════ */
+    .wk,.bk,.mob-wk,.mob-bk{
+      -webkit-tap-highlight-color:transparent;
+      -webkit-touch-callout:none;
+      -webkit-user-select:none;
+      user-select:none;
+      outline:none;
+    }
+    /* Kill the blue selection box on long-press */
+    .wk::selection,.bk::selection,
+    .mob-wk::selection,.mob-bk::selection{
+      background:transparent;
+    }
