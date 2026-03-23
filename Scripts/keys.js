@@ -5,6 +5,43 @@
 function isMobile(){return window.innerWidth<=600;}
 
 /* ═══════════════════════════════════════════════════
+   PORTRAIT LOCK
+   On touch devices in portrait: show overlay, block use
+═══════════════════════════════════════════════════ */
+function checkOrientation(){
+  var overlay = document.getElementById('portraitOverlay');
+  if(!overlay) return;
+  var isTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+  if(!isTouch){ overlay.classList.remove('show'); return; }
+  var portrait = window.innerHeight > window.innerWidth;
+  if(portrait){
+    overlay.classList.add('show');
+  } else {
+    overlay.classList.remove('show');
+  }
+}
+window.addEventListener('resize', checkOrientation);
+window.addEventListener('orientationchange', function(){ setTimeout(checkOrientation, 150); });
+window.addEventListener('load', checkOrientation);
+
+/* ═══════════════════════════════════════════════════
+   NOTE HELPER TOGGLE
+═══════════════════════════════════════════════════ */
+function applyNoteHelperState(enabled){
+  localStorage.setItem('webharmonium.noteHelper', enabled ? 'true' : 'false');
+  var panel = document.getElementById('noteHelper');
+  if(!panel) return;
+  panel.style.display = enabled ? 'block' : 'none';
+  // Also sync the checkbox if settings is open
+  var tog = document.getElementById('noteHelperToggle');
+  if(tog) tog.checked = enabled;
+}
+
+function setNoteHelperEnabled(enabled){
+  applyNoteHelperState(enabled);
+}
+
+/* ═══════════════════════════════════════════════════
    BLACK KEY LAYOUT
    Desktop: absolute left positioning inside flex row
    Mobile:  absolute top positioning inside horizontal layout
@@ -52,7 +89,9 @@ var _origInit=init;
 init=function(){
   _origInit();
   requestAnimationFrame(layoutKeys);
-  document.getElementById('noteHelper').style.display='block';
+  // Note helper: off by default unless user enabled it
+  var enabled = localStorage.getItem('webharmonium.noteHelper') === 'true';
+  applyNoteHelperState(enabled);
   rebuildHelperDropdown();
   restoreSession();
   buildOskKeyboard();
@@ -244,6 +283,10 @@ function openSettings(){
   document.getElementById('myRangeModal').value=document.getElementById('myRange').value;
   document.getElementById('volumeLevelModal').innerText=document.getElementById('myRange').value+'%';
   document.getElementById('useReverbModal').checked=document.getElementById('useReverb').checked;
+  // Sync note helper toggle
+  var enabled = localStorage.getItem('webharmonium.noteHelper') === 'true';
+  var tog = document.getElementById('noteHelperToggle');
+  if(tog) tog.checked = enabled;
   renderSongList();
   document.getElementById('settingsOverlay').classList.add('open');
 }
